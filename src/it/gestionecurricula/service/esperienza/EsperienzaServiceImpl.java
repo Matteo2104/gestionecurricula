@@ -6,6 +6,7 @@ import java.util.List;
 
 import it.gestionecurricula.connection.MyConnection;
 import it.gestionecurricula.dao.Constants;
+import it.gestionecurricula.dao.curriculum.CurriculumDAO;
 import it.gestionecurricula.dao.esperienza.EsperienzaDAO;
 import it.gestionecurricula.model.Esperienza;
 
@@ -72,10 +73,11 @@ public class EsperienzaServiceImpl implements EsperienzaService {
 		try (Connection connection = MyConnection.getConnection(Constants.DRIVER, Constants.CONNECT)) {
 			 
 			esperienzaDAO.setConnection(connection);
+			
 			result = esperienzaDAO.insert(input);
 			
 		} catch (Exception e) {
-			throw new RuntimeException("errore nella connessione");
+			throw new RuntimeException("errore di connessione");
 		}
 		return result;
 	}
@@ -107,6 +109,32 @@ public class EsperienzaServiceImpl implements EsperienzaService {
 
 		} catch (Exception e) {
 			throw new RuntimeException("errore connessione");
+		}
+		return result;
+	}
+
+	@Override
+	public int inserisciNuovoConControlli(Esperienza input) throws Exception {
+		int result = 0;
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER, Constants.CONNECT)) {
+			 
+			esperienzaDAO.setConnection(connection);
+			
+			List<Esperienza> listaDiEsperienze = esperienzaDAO.findAllByIdCurriculum(input.getCurriculum().getId());
+			
+			if (listaDiEsperienze != null && !listaDiEsperienze.isEmpty()) {
+				for (Esperienza e : listaDiEsperienze) {
+					if (e.getDataFine() == null) {
+						e.setDataFine(input.getDataInizio());
+						esperienzaDAO.update(e);
+					} 
+				}
+			}
+			
+			result = esperienzaDAO.insert(input);
+			
+		} catch (Exception e) {
+			throw new RuntimeException("errore di connessione");
 		}
 		return result;
 	}

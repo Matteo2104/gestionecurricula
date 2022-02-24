@@ -20,4 +20,6 @@ public interface EsperienzaService {
 	public int rimuovi(Esperienza input) throws Exception;
 
 	public List<Esperienza> findByExample(Esperienza input) throws Exception;
+	
+	public int inserisciNuovoConControlli(Esperienza input) throws Exception;
 }

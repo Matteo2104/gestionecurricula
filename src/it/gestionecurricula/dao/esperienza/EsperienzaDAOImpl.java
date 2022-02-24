@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,11 +29,37 @@ public class EsperienzaDAOImpl extends AbstractMySQLDAO implements EsperienzaDAO
 
 		int result = 0;
 		try (PreparedStatement ps = connection.prepareStatement(
-				"INSERT INTO esperienza (descrizione, datainizio, datafine, conoscenzeacquisite) VALUES (?, ?, ?, ?);")) {
-			ps.setString(1, input.getDescrizione());
-			ps.setDate(2, new java.sql.Date(input.getDataInizio().getTime()));
-			ps.setDate(3, new java.sql.Date(input.getDataFine().getTime()));
-			ps.setString(4, input.getConoscenzeAcquisite());
+				"INSERT INTO esperienza (descrizione, datainizio, datafine, conoscenzeacquisite, curriculum_id) VALUES (?, ?, ?, ?, ?);")) {
+			
+			if (input.getDescrizione() == null) {
+				ps.setNull(1, Types.VARCHAR);
+			} else {
+				ps.setString(1, input.getDescrizione());
+			}
+			
+			if (input.getDataInizio() == null) {
+				ps.setNull(2, Types.DATE);
+			} else {
+				ps.setDate(2, new java.sql.Date(input.getDataInizio().getTime()));
+			}
+			
+			if (input.getDataFine() == null) {
+				ps.setNull(3, Types.DATE);
+			} else {
+				ps.setDate(3, new java.sql.Date(input.getDataFine().getTime()));
+			}
+			
+			if (input.getConoscenzeAcquisite() == null) {
+				ps.setNull(4, Types.VARCHAR);
+			} else {
+				ps.setString(4, input.getConoscenzeAcquisite());
+			}
+			
+			if (input.getCurriculum() == null) {
+				ps.setNull(5, Types.INTEGER);
+			} else {
+				ps.setLong(5, input.getCurriculum().getId());
+			}
 
 			result = ps.executeUpdate();
 		} catch (Exception e) {
@@ -102,11 +129,33 @@ public class EsperienzaDAOImpl extends AbstractMySQLDAO implements EsperienzaDAO
 
 		int result = 0;
 		try (PreparedStatement ps = connection.prepareStatement(
-				"UPDATE esperienza SET descrizione=?, datainizio=?, datafine=?, conoscenzeacquisite=?;")) {
-			ps.setString(1, input.getDescrizione());
-			ps.setDate(2, new java.sql.Date(input.getDataInizio().getTime()));
-			ps.setDate(3, new java.sql.Date(input.getDataFine().getTime()));
-			ps.setString(4, input.getConoscenzeAcquisite());
+				"UPDATE esperienza SET descrizione=?, datainizio=?, datafine=?, conoscenzeacquisite=? WHERE id=?;")) {
+			if (input.getDescrizione() == null) {
+				ps.setNull(1, Types.VARCHAR);
+			} else {
+				ps.setString(1, input.getDescrizione());
+			}
+			
+			if (input.getDataInizio() == null) {
+				ps.setNull(2, Types.DATE);
+			} else {
+				ps.setDate(2, new java.sql.Date(input.getDataInizio().getTime()));
+			}
+			
+			if (input.getDataFine() == null) {
+				ps.setNull(3, Types.DATE);
+			} else {
+				ps.setDate(3, new java.sql.Date(input.getDataFine().getTime()));
+			}
+			
+			if (input.getConoscenzeAcquisite() == null) {
+				ps.setNull(4, Types.VARCHAR);
+			} else {
+				ps.setString(4, input.getConoscenzeAcquisite());
+			}
+			
+			
+			ps.setLong(5, input.getId());
 
 			result = ps.executeUpdate();
 		} catch (Exception e) {
@@ -187,6 +236,36 @@ public class EsperienzaDAOImpl extends AbstractMySQLDAO implements EsperienzaDAO
 		return resultList;
 	}
 
-	
+	public List<Esperienza> findAllByIdCurriculum(Long id) throws Exception {
+		if (isNotActive())
+			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
+
+		List<Esperienza> result = new ArrayList<>();
+		Esperienza temp = null;
+
+		try (PreparedStatement ps = connection.prepareStatement("select * from esperienza e INNER JOIN curriculum c ON e.curriculum_id = c.id WHERE c.id = ?;");) {
+			ps.setLong(1, id);
+			
+			try (ResultSet rs = ps.executeQuery();) {
+				while (rs.next()) {
+					temp = new Esperienza();
+
+					temp.setId(rs.getLong("e.id"));
+					temp.setDescrizione(rs.getString("e.descrizione"));
+					temp.setDataInizio(rs.getDate("e.datainizio"));
+					temp.setDataFine(rs.getDate("e.datafine"));
+					temp.setConoscenzeAcquisite(rs.getString("e.conoscenzeacquisite"));
+					
+					//System.out.println(temp);
+					result.add(temp);
+				}
+			}
+			
+
+		} catch (Exception e) {
+			throw new RuntimeException("impossibile eseguire query");
+		}
+		return result;
+	}
 
 }
