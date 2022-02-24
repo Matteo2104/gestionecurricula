@@ -94,8 +94,26 @@ public class EsperienzaDAOImpl extends AbstractMySQLDAO implements EsperienzaDAO
 
 	@Override
 	public int update(Esperienza input) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		if (isNotActive())
+			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
+
+		if (input == null)
+			throw new Exception("Valore di input non ammesso.");
+
+		int result = 0;
+		try (PreparedStatement ps = connection.prepareStatement(
+				"UPDATE esperienza SET descrizione=?, datainizio=?, datafine=?, conoscenzeacquisite=?;")) {
+			ps.setString(1, input.getDescrizione());
+			ps.setDate(2, new java.sql.Date(input.getDataInizio().getTime()));
+			ps.setDate(3, new java.sql.Date(input.getDataFine().getTime()));
+			ps.setString(4, input.getConoscenzeAcquisite());
+
+			result = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override

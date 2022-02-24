@@ -43,8 +43,16 @@ public class EsperienzaServiceImpl implements EsperienzaService {
 
 	@Override
 	public int aggiorna(Esperienza input) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER, Constants.CONNECT)) {
+			 
+			esperienzaDAO.setConnection(connection);
+			result = esperienzaDAO.update(input);
+			
+		} catch (Exception e) {
+			throw new RuntimeException("errore nella connessione");
+		}
+		return result;
 	}
 
 	@Override
