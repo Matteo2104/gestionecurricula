@@ -37,14 +37,33 @@ public class CurriculumServiceImpl implements CurriculumService {
 
 	@Override
 	public Curriculum findById(Long idInput) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Curriculum result = null;
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER, Constants.CONNECT)) {
+
+			// inietto la connection nel dao
+			curriculumDAO.setConnection(connection);
+
+			// eseguo quello che realmente devo fare
+			result = curriculumDAO.get(idInput);
+
+		} catch (Exception e) {
+			throw new RuntimeException("errore connessione");
+		}
+		return result;
 	}
 
 	@Override
 	public int aggiorna(Curriculum input) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER, Constants.CONNECT)) {
+			 
+			curriculumDAO.setConnection(connection);
+			result = curriculumDAO.update(input);
+			
+		} catch (Exception e) {
+			throw new RuntimeException("errore nella connessione");
+		}
+		return result;
 	}
 
 	@Override
@@ -77,8 +96,19 @@ public class CurriculumServiceImpl implements CurriculumService {
 
 	@Override
 	public List<Curriculum> findByExample(Curriculum input) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		List<Curriculum> result = new ArrayList<>();
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER, Constants.CONNECT)) {
+
+			// inietto la connection nel dao
+			curriculumDAO.setConnection(connection);
+
+			// eseguo quello che realmente devo fare
+			result = curriculumDAO.findByExample(input);
+
+		} catch (Exception e) {
+			throw new RuntimeException("errore connessione");
+		}
+		return result;
 	}
 
 }
