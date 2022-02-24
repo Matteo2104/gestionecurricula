@@ -37,8 +37,19 @@ public class EsperienzaServiceImpl implements EsperienzaService {
 
 	@Override
 	public Esperienza findById(Long idInput) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Esperienza result = null;
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER, Constants.CONNECT)) {
+
+			// inietto la connection nel dao
+			esperienzaDAO.setConnection(connection);
+
+			// eseguo quello che realmente devo fare
+			result = esperienzaDAO.get(idInput);
+
+		} catch (Exception e) {
+			throw new RuntimeException("errore connessione");
+		}
+		return result;
 	}
 
 	@Override

@@ -118,8 +118,31 @@ public class EsperienzaDAOImpl extends AbstractMySQLDAO implements EsperienzaDAO
 
 	@Override
 	public Esperienza get(Long idInput) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		if (isNotActive())
+			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
+
+		Esperienza temp = null;
+
+		try (PreparedStatement ps = connection.prepareStatement("select * from esperienza where id=?;");) {
+
+			ps.setLong(1, idInput);
+
+			try (ResultSet rs = ps.executeQuery();) {
+				while (rs.next()) {
+					temp = new Esperienza();
+
+					temp.setId(rs.getLong("id"));
+					temp.setDescrizione(rs.getString("descrizione"));
+					temp.setDataInizio(rs.getDate("datafine"));
+					temp.setDataFine(rs.getDate("datafine"));
+					temp.setConoscenzeAcquisite(rs.getString("conoscenzeacquisite"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return temp;
 	}
 
 	@Override
