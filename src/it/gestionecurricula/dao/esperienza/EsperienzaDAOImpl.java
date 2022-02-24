@@ -124,8 +124,44 @@ public class EsperienzaDAOImpl extends AbstractMySQLDAO implements EsperienzaDAO
 
 	@Override
 	public List<Esperienza> findByExample(Esperienza example) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		List<Esperienza> resultList = new ArrayList<>();
+		Esperienza temp = null;
+		String sqlStatement = "SELECT * FROM televisore WHERE 1=1";
+		
+		if (example.getDescrizione() != null) {
+			sqlStatement += " AND marca='" + example.getDescrizione() + "'";
+		}
+		if (example.getDataInizio() != null) {
+			sqlStatement += " AND modello='" + example.getDataInizio() + "'";
+		}
+		if (example.getDataFine() != null) {
+			sqlStatement += " AND dataproduzione='" + example.getDataFine() + "'";
+		}
+		if (example.getConoscenzeAcquisite() != null) {
+			sqlStatement += " AND modello='" + example.getConoscenzeAcquisite() + "'";
+		}
+		
+		try (PreparedStatement ps = connection.prepareStatement(sqlStatement);) {
+			
+			try (ResultSet rs = ps.executeQuery();) {
+				
+				while (rs.next()) {
+					temp = new Esperienza();
+					
+					temp.setId(rs.getLong("id"));
+					temp.setDescrizione(rs.getString("descrizione"));
+					temp.setDataInizio(rs.getDate("datafine"));
+					temp.setDataFine(rs.getDate("datafine"));
+					temp.setConoscenzeAcquisite(rs.getString("conoscenzeacquisite"));
+					
+					resultList.add(temp);
+				}
+			}
+			
+		} catch (Exception e) {
+			throw new RuntimeException("errore esecuzione query findByExample");
+		}
+		return resultList;
 	}
 
 	
