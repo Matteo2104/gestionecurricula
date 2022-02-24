@@ -6,7 +6,6 @@ import java.util.List;
 
 import it.gestionecurricula.connection.MyConnection;
 import it.gestionecurricula.dao.Constants;
-import it.gestionecurricula.dao.curriculum.CurriculumDAO;
 import it.gestionecurricula.dao.esperienza.EsperienzaDAO;
 import it.gestionecurricula.model.Esperienza;
 

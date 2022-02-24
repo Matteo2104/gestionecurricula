@@ -15,24 +15,29 @@ public class TestCurriculum {
 		
 		try {
 			
-			testInsert(curriculumService);
+			// CRUD CURRICULUM
+			testInsertCurriculum(curriculumService);
 			
-			testDelete(curriculumService);
+			testDeleteCurriculum(curriculumService);
 			
-			testInsert(esperienzaService);
+			// CRUD ESPERIENZA
+			testInsertEsperienza(esperienzaService);
 			
-			testDelete(esperienzaService);
+			testDeleteEsperienza(esperienzaService);
 			
 			
-			testInsertExtended(esperienzaService, curriculumService);
-
+			
+			testInsertEsperienzaExtended1(esperienzaService, curriculumService);
+			
+			testInsertCurriculumExtended(curriculumService, esperienzaService);
+			
 		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private static void testInsert(CurriculumService curriculumService) throws Exception {
+	private static void testInsertCurriculum(CurriculumService curriculumService) throws Exception {
 		System.out.println("............ INIZIO TEST INSERT ...................");
 
 		int inseriti = curriculumService
@@ -43,7 +48,7 @@ public class TestCurriculum {
 		System.out.println("............ FINE TEST INSERT: successo ...................");
 	}
 	
-	private static void testDelete(CurriculumService curriculumService) throws Exception {
+	private static void testDeleteCurriculum(CurriculumService curriculumService) throws Exception {
 		System.out.println("............ INIZIO TEST DELETE ...................");
 
 		// inserisco un nuovo record
@@ -62,7 +67,7 @@ public class TestCurriculum {
 	}
 
 
-	private static void testInsert(EsperienzaService esperienzaService) throws Exception {
+	private static void testInsertEsperienza(EsperienzaService esperienzaService) throws Exception {
 		System.out.println("............ INIZIO TEST INSERT ...................");
 
 		int inseriti = esperienzaService
@@ -73,7 +78,7 @@ public class TestCurriculum {
 		System.out.println("............ FINE TEST INSERT: successo ...................");
 	}
 	
-	private static void testDelete(EsperienzaService esperienzaService) throws Exception {
+	private static void testDeleteEsperienza(EsperienzaService esperienzaService) throws Exception {
 		System.out.println("............ INIZIO TEST DELETE ...................");
 
 		// inserisco un nuovo record
@@ -91,8 +96,7 @@ public class TestCurriculum {
 		System.out.println("............ FINE TEST DELETE: successo ...................");
 	}
 	
-	@SuppressWarnings("deprecation")
-	private static void testInsertExtended(EsperienzaService esperienzaService, CurriculumService curriculumService) throws Exception {
+	private static void testInsertEsperienzaExtended1(EsperienzaService esperienzaService, CurriculumService curriculumService) throws Exception {
 		System.out.println("............ INIZIO TEST INSERT EXTENDED ...................");
 		
 		// inserisco un nuovo curriculum
@@ -109,10 +113,33 @@ public class TestCurriculum {
 		if (Esperienzeinserite < 3)
 			throw new RuntimeException("non è stato possibile inserire un record");
 		
-		// inserisco
-		esperienzaService.inserisciNuovoConControlli(new Esperienza("nuovo lavoro", new Date(), new Date(), "si saprà come sarà", mioCurriculum));
+		// inserisco una nuova esperienza, che però verrà inserita solo dopo aver chiuso eventuali esperienze aperte
+		Esperienzeinserite = esperienzaService.inserisciNuovoConControlli(new Esperienza("nuovo lavoro", new Date(), new Date(), "si saprà come sarà", mioCurriculum));
+		if (Esperienzeinserite < 1) 
+			throw new RuntimeException("test inserimento con controllo fallito");
 		
 		System.out.println("............ FINE TEST INSERT EXTENDED ...................");
+	}
+	
+	private static void testInsertCurriculumExtended(CurriculumService curriculumService, EsperienzaService esperienzaService) throws Exception {
+		System.out.println("............ INIZIO TEST INSERT ...................");
 
+		int inseriti = curriculumService.inserisciNuovo(new Curriculum("matteo", "scarcella", new Date(), "38627", "dsjcnskj"));
+		if (inseriti < 1)
+			throw new RuntimeException("non è stato possibile inserire un record");
+		
+		Curriculum appenaInserito = curriculumService.listAll().get(curriculumService.listAll().size() - 1);
+		
+		// inserisco 1 esperienza
+		int Esperienzeinserite = esperienzaService.inserisciNuovo(new Esperienza("lavoro bello", new Date(), new Date(), "e stato bello", appenaInserito));
+		if (Esperienzeinserite < 1)
+			throw new RuntimeException("non è stato possibile inserire un record");
+		
+		// provo a eliminare il curriculum ma devo ottenere un errore perchè ho collegata un'esperienza
+		inseriti = curriculumService.rimuovi(appenaInserito);
+		if (inseriti < 1)
+			throw new RuntimeException();
+
+		System.out.println("............ FINE TEST INSERT: successo ...................");
 	}
 }

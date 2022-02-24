@@ -88,8 +88,7 @@ public class CurriculumDAOImpl extends AbstractMySQLDAO implements CurriculumDAO
 
 			result = ps.executeUpdate();
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
+			throw new RuntimeException("errore nell'esecuzione della delete");
 		}
 		return result;
 	}
@@ -192,6 +191,40 @@ public class CurriculumDAOImpl extends AbstractMySQLDAO implements CurriculumDAO
 			throw new RuntimeException("errore esecuzione query findByExample");
 		}
 		return resultList;
+	}
+
+	@Override
+	public List<Curriculum> findEsperienze(Curriculum input) throws Exception {
+		if (isNotActive())
+			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
+
+		List<Curriculum> result = new ArrayList<>();
+		Curriculum temp = null;
+
+		try (PreparedStatement ps = connection.prepareStatement("select * from curriculum c INNER JOIN esperienza e ON c.id = e.curriculum_id WHERE c.id = ?;");) {
+			ps.setLong(1, input.getId());
+			
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					temp = new Curriculum();
+
+					temp.setId(rs.getLong("id"));
+					temp.setNome(rs.getString("nome"));
+					temp.setCognome(rs.getString("cognome"));
+					temp.setDataNascita(rs.getDate("datadinascita"));
+					temp.setTelefono(rs.getString("telefono"));
+					temp.setEmail(rs.getString("email"));
+
+					result.add(temp);
+				}
+			}
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 }

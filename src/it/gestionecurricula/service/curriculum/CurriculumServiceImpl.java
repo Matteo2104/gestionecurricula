@@ -86,10 +86,16 @@ public class CurriculumServiceImpl implements CurriculumService {
 		try (Connection connection = MyConnection.getConnection(Constants.DRIVER, Constants.CONNECT)) {
 			 
 			curriculumDAO.setConnection(connection);
+			
+			if (!curriculumDAO.findEsperienze(input).isEmpty()) 
+				throw new RuntimeException("non si può eliminare un curriculum che ha almeno 1 esperienza");
+			
 			result = curriculumDAO.delete(input);
 			
+			
+				
 		} catch (Exception e) {
-			throw new RuntimeException("errore nella connessione");
+			throw e;
 		}
 		return result;
 	}

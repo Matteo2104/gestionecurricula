@@ -1,8 +1,10 @@
 package it.gestionecurricula.dao.curriculum;
 
+import java.util.List;
+
 import it.gestionecurricula.dao.IBaseDAO;
 import it.gestionecurricula.model.Curriculum;
 
 public interface CurriculumDAO extends IBaseDAO<Curriculum> {
-	// per ora non c'è niente qui
+	public List<Curriculum> findEsperienze(Curriculum input) throws Exception;
 }
