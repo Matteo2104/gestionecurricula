@@ -29,6 +29,8 @@ public class TestCurriculum {
 			
 			testInsertEsperienzaExtended1(esperienzaService, curriculumService);
 			
+			testInsertEsperienzaExtended2(esperienzaService, curriculumService);
+			
 			testInsertCurriculumExtended(curriculumService, esperienzaService);
 			
 		
@@ -121,8 +123,33 @@ public class TestCurriculum {
 		System.out.println("............ FINE TEST INSERT EXTENDED ...................");
 	}
 	
+	private static void testInsertEsperienzaExtended2(EsperienzaService esperienzaService, CurriculumService curriculumService) throws Exception {
+		System.out.println("............ INIZIO TEST INSERT EXTENDED 2 ...................");
+		
+		// inserisco un nuovo curriculum
+		int curriculumInseriti = curriculumService.inserisciNuovo(new Curriculum("matteo", "scarcella", new Date(), "2983923", "email"));
+		if (curriculumInseriti < 1)
+			throw new RuntimeException("non è stato possibile inserire un record");
+		
+		Curriculum mioCurriculum = curriculumService.listAll().get(curriculumService.listAll().size() - 1);
+		
+		// inserisco 3 esperienze
+		int Esperienzeinserite = esperienzaService.inserisciNuovo(new Esperienza("lavoro bello", new Date(1000000), new Date(90000000), "e stato bello", mioCurriculum));
+		Esperienzeinserite += esperienzaService.inserisciNuovo(new Esperienza("lavoro carino", new Date(100000000), new Date(1000000000), "e stato carino", mioCurriculum));
+		Esperienzeinserite += esperienzaService.inserisciNuovo(new Esperienza("lavoro brutto", new Date(1000000000), new Date(2100000000), "e stato brutto", mioCurriculum));
+		if (Esperienzeinserite < 3)
+			throw new RuntimeException("non è stato possibile inserire un record");
+		
+		// inserisco una nuova esperienza, che però ha la data di inizio nel periodo della 3 esperienza
+		Esperienzeinserite = esperienzaService.inserisciNuovoConControlli(new Esperienza("nuovo lavoro", new Date(1500000000), new Date(2110000000), "si saprà come sarà", mioCurriculum));
+		if (Esperienzeinserite < 1) 
+			throw new RuntimeException("test inserimento con controllo fallito");
+		
+		System.out.println("............ FINE TEST INSERT EXTENDED 2 ...................");
+	}
+	
 	private static void testInsertCurriculumExtended(CurriculumService curriculumService, EsperienzaService esperienzaService) throws Exception {
-		System.out.println("............ INIZIO TEST INSERT ...................");
+		System.out.println("............ INIZIO TEST INSERT CURRICULUM ...................");
 
 		int inseriti = curriculumService.inserisciNuovo(new Curriculum("matteo", "scarcella", new Date(), "38627", "dsjcnskj"));
 		if (inseriti < 1)
@@ -140,6 +167,8 @@ public class TestCurriculum {
 		if (inseriti < 1)
 			throw new RuntimeException();
 
-		System.out.println("............ FINE TEST INSERT: successo ...................");
+		System.out.println("............ FINE TEST INSERT CURRICULUM: successo ...................");
 	}
+
+	
 }

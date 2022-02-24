@@ -123,17 +123,22 @@ public class EsperienzaServiceImpl implements EsperienzaService {
 			
 			if (listaDiEsperienze != null && !listaDiEsperienze.isEmpty()) {
 				for (Esperienza e : listaDiEsperienze) {
+					System.out.println(e);
 					if (e.getDataFine() == null) {
 						e.setDataFine(input.getDataInizio());
 						esperienzaDAO.update(e);
-					} 
+					}
+					
+					if (e.getDataFine().compareTo(input.getDataInizio()) > 0) {
+						throw new RuntimeException("non si può inserire un'esperienza che coincida temporalmente con una gia esistente");
+					}
 				}
 			}
 			
 			result = esperienzaDAO.insert(input);
 			
 		} catch (Exception e) {
-			throw new RuntimeException("errore di connessione");
+			throw e;
 		}
 		return result;
 	}
