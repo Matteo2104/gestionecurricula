@@ -1,7 +1,11 @@
 package it.gestionecurricula.service.curriculum;
 
+import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
+import it.gestionecurricula.connection.MyConnection;
+import it.gestionecurricula.dao.Constants;
 import it.gestionecurricula.dao.curriculum.CurriculumDAO;
 import it.gestionecurricula.model.Curriculum;
 
@@ -16,8 +20,19 @@ public class CurriculumServiceImpl implements CurriculumService {
 
 	@Override
 	public List<Curriculum> listAll() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		List<Curriculum> result = new ArrayList<>();
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER, Constants.CONNECT)) {
+
+			// inietto la connection nel dao
+			curriculumDAO.setConnection(connection);
+
+			// eseguo quello che realmente devo fare
+			result = curriculumDAO.list();
+
+		} catch (Exception e) {
+			throw new RuntimeException("errore connessione");
+		}
+		return result;
 	}
 
 	@Override
@@ -34,14 +49,30 @@ public class CurriculumServiceImpl implements CurriculumService {
 
 	@Override
 	public int inserisciNuovo(Curriculum input) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER, Constants.CONNECT)) {
+			 
+			curriculumDAO.setConnection(connection);
+			result = curriculumDAO.insert(input);
+			
+		} catch (Exception e) {
+			throw new RuntimeException("errore nella connessione");
+		}
+		return result;
 	}
 
 	@Override
 	public int rimuovi(Curriculum input) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER, Constants.CONNECT)) {
+			 
+			curriculumDAO.setConnection(connection);
+			result = curriculumDAO.delete(input);
+			
+		} catch (Exception e) {
+			throw new RuntimeException("errore nella connessione");
+		}
+		return result;
 	}
 
 	@Override
