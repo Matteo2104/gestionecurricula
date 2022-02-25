@@ -116,7 +116,7 @@ public class TestCurriculum {
 			throw new RuntimeException("non è stato possibile inserire un record");
 		
 		// inserisco una nuova esperienza, che però verrà inserita solo dopo aver chiuso eventuali esperienze aperte
-		Esperienzeinserite = esperienzaService.inserisciNuovoConControlli(new Esperienza("nuovo lavoro", new Date(), new Date(), "si saprà come sarà", mioCurriculum));
+		Esperienzeinserite = esperienzaService.inserisciNuovoConControlli(new Esperienza("nuovo lavoro", new Date(), new Date(), "si saprà come sarà"), mioCurriculum.getId());
 		if (Esperienzeinserite < 1) 
 			throw new RuntimeException("test inserimento con controllo fallito");
 		
@@ -141,7 +141,7 @@ public class TestCurriculum {
 			throw new RuntimeException("non è stato possibile inserire un record");
 		
 		// inserisco una nuova esperienza, che però ha la data di inizio nel periodo della 3 esperienza
-		Esperienzeinserite = esperienzaService.inserisciNuovoConControlli(new Esperienza("nuovo lavoro", new Date(1500000000), new Date(2110000000), "si saprà come sarà", mioCurriculum));
+		Esperienzeinserite = esperienzaService.inserisciNuovoConControlli(new Esperienza("nuovo lavoro", new Date(1500000000), new Date(2110000000), "si saprà come sarà"), mioCurriculum.getId());
 		if (Esperienzeinserite < 1) 
 			throw new RuntimeException("test inserimento con controllo fallito");
 		

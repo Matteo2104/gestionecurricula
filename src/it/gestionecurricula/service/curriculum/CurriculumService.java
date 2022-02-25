@@ -3,11 +3,13 @@ package it.gestionecurricula.service.curriculum;
 import java.util.List;
 
 import it.gestionecurricula.dao.curriculum.CurriculumDAO;
+import it.gestionecurricula.dao.esperienza.EsperienzaDAO;
 import it.gestionecurricula.model.Curriculum;
 
 public interface CurriculumService {
 	// questo mi serve per injection
 	public void setCurriculumDao(CurriculumDAO curriculumDAO);
+	public void setEsperienzaDao(EsperienzaDAO esperienzaDAO);
 
 	public List<Curriculum> listAll() throws Exception;
 

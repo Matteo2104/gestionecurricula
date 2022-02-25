@@ -113,17 +113,17 @@ public class EsperienzaServiceImpl implements EsperienzaService {
 	}
 
 	@Override
-	public int inserisciNuovoConControlli(Esperienza input) throws Exception {
+	public int inserisciNuovoConControlli(Esperienza input, Long idInput) throws Exception {
 		int result = 0;
 		try (Connection connection = MyConnection.getConnection(Constants.DRIVER, Constants.CONNECT)) {
 			 
 			esperienzaDAO.setConnection(connection);
 			
-			List<Esperienza> listaDiEsperienze = esperienzaDAO.findAllByIdCurriculum(input.getCurriculum().getId());
+			List<Esperienza> listaDiEsperienze = esperienzaDAO.findAllByIdCurriculum(idInput);
 			
 			if (listaDiEsperienze != null && !listaDiEsperienze.isEmpty()) {
 				for (Esperienza e : listaDiEsperienze) {
-					System.out.println(e);
+
 					if (e.getDataFine() == null) {
 						e.setDataFine(input.getDataInizio());
 						esperienzaDAO.update(e);

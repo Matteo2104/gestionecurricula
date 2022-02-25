@@ -21,5 +21,5 @@ public interface EsperienzaService {
 
 	public List<Esperienza> findByExample(Esperienza input) throws Exception;
 	
-	public int inserisciNuovoConControlli(Esperienza input) throws Exception;
+	public int inserisciNuovoConControlli(Esperienza input, Long idInput) throws Exception;
 }

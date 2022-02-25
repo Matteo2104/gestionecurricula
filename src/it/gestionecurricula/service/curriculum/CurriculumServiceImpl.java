@@ -7,15 +7,22 @@ import java.util.List;
 import it.gestionecurricula.connection.MyConnection;
 import it.gestionecurricula.dao.Constants;
 import it.gestionecurricula.dao.curriculum.CurriculumDAO;
+import it.gestionecurricula.dao.esperienza.EsperienzaDAO;
 import it.gestionecurricula.model.Curriculum;
 
 public class CurriculumServiceImpl implements CurriculumService {
 
 	CurriculumDAO curriculumDAO;
+	EsperienzaDAO esperienzaDAO;
 	
 	@Override
 	public void setCurriculumDao(CurriculumDAO curriculumDAO) {
 		this.curriculumDAO = curriculumDAO;
+	}
+	
+	@Override
+	public void setEsperienzaDao(EsperienzaDAO esperienzaDAO) {
+		this.esperienzaDAO = esperienzaDAO;
 	}
 
 	@Override
@@ -86,8 +93,9 @@ public class CurriculumServiceImpl implements CurriculumService {
 		try (Connection connection = MyConnection.getConnection(Constants.DRIVER, Constants.CONNECT)) {
 			 
 			curriculumDAO.setConnection(connection);
+			esperienzaDAO.setConnection(connection);
 			
-			if (!curriculumDAO.findEsperienze(input).isEmpty()) 
+			if (!esperienzaDAO.findAllByIdCurriculum(input.getId()).isEmpty()) 
 				throw new RuntimeException("non si può eliminare un curriculum che ha almeno 1 esperienza");
 			
 			result = curriculumDAO.delete(input);
@@ -116,5 +124,7 @@ public class CurriculumServiceImpl implements CurriculumService {
 		}
 		return result;
 	}
+
+	
 
 }
